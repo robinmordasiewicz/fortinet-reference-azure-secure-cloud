@@ -1,5 +1,5 @@
 +++
-title = "Fortinet Secure Cloud Blueprint"
+title = "Secure Cloud Blueprint"
 weight = 1
 archetype="home"
 +++
