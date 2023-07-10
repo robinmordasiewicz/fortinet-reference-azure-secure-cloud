@@ -1,8 +1,0 @@
-<speak>
-  <s>Navigate to support.fortinet.com, and click "login now".</s>
-  <s>Enter your username and password, and click "login".</s><break time="2s"/>
-  <s>After logging in, select services near the top of the screen.</s><break time="1s"/>
-  <s>Click "Show More".</s><break time="1s"/>
-  <s>Then click Forti<say-as interpret-as="characters">CNP</say-as>, and the Forti<say-as interpret-as="characters">CNP</say-as>portal will load.</s><break time="4s"/>
-  <s>Once the Forti<say-as interpret-as="characters">CNP</say-as> portal loads, a dashboard is presented to the administrator.</s>
-</speak>
