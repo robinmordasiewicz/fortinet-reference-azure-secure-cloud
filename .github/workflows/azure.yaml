@@ -75,7 +75,7 @@ jobs:
     - name: 'Destroy'
       if: steps.dotenv.outputs.DEPLOYED != 'true'
       run: |
-        az deployment group delete -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }}
+        az deployment group list -g ${{ steps.get-repo-name.outputs.repo }} && az deployment group delete -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }}
         az group exists -n ${{ steps.get-repo-name.outputs.repo }} && az group delete --yes --name ${{ steps.get-repo-name.outputs.repo }}
 
     - name: 'Show Output'
