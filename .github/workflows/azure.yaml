@@ -27,7 +27,6 @@ jobs:
       uses: falti/dotenv-action@v1.0.4
 
     - name: 'Get Repo Name'
-      if: steps.dotenv.outputs.DEPLOYED == 'true'
       id: get-repo-name
       run: |
           REPO=`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`
