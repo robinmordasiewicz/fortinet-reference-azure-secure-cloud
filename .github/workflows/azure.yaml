@@ -18,11 +18,14 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+
     - name: 'Clone Repo'
       uses: actions/checkout@v3
+
     - name: 'Populate environment variables from .env file in root of repo'
       id: dotenv
       uses: falti/dotenv-action@v1.0.4
+
     - name: 'Get Repo Name'
       if: steps.dotenv.outputs.DEPLOYED == 'true'
       id: get-repo-name
@@ -37,15 +40,10 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: 'Run Azure CLI commands'
+    - name: 'Create Resource Group'
       if: steps.dotenv.outputs.DEPLOYED == 'true'
       run: |
-        az bicep upgrade
         az group create --location ${{ steps.dotenv.outputs.LOCATION }} --name ${{ steps.get-repo-name.outputs.repo }}
-        az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm
-        az vm image terms accept --publisher fortinet --offer fortinet_fortiweb-vm_v5 --plan fortinet_fw-vm
-        az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm_payg_2022
-        az vm image terms accept --publisher fortinet --offer fortinet_fortiweb-vm_v5 --plan fortinet_fw-vm_payg_v2
 
     - name: deploy
       if: steps.dotenv.outputs.DEPLOYED == 'true'
@@ -58,11 +56,20 @@ jobs:
         parameters: "adminPassword=${{ secrets.adminPassword }} adminUsername=${{ secrets.adminUsername }} deploymentPrefix=${{ steps.get-repo-name.outputs.repo }}"
         failOnStdErr: false
 
-    - name: 'Run Azure CLI commands'
+    - name: 'Accept License Agreement'
       if: steps.dotenv.outputs.DEPLOYED == 'true'
       run: |
         az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm
         az vm image terms accept --publisher fortinet --offer fortinet_fortiweb-vm_v5 --plan fortinet_fw-vm
         az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm_payg_2022
         az vm image terms accept --publisher fortinet --offer fortinet_fortiweb-vm_v5 --plan fortinet_fw-vm_payg_v2
-        az deployment group show -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }} --query properties.outputs
+
+    - name: 'Show Output'
+      if: steps.dotenv.outputs.DEPLOYED == 'true'
+      run: az deployment group show -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }} --query properties.outputs
+
+    - name: 'Destroy'
+      if: steps.dotenv.outputs.DEPLOYED != 'true'
+      run: |
+        az deployment group delete  -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }}
+        az group delete --yes --name ${{ steps.get-repo-name.outputs.repo }}
