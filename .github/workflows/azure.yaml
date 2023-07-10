@@ -32,7 +32,6 @@ jobs:
       run: |
         az bicep upgrade
         az group create --location CanadaCentral --name ${{ steps.get-repo-name.outputs.repo }}
-        #az deployment group create --name ${{ steps.get-repo-name.outputs.repo }} --resource-group ${{ steps.get-repo-name.outputs.repo }} --template-file 000-main.bicep
         az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm
         az vm image terms accept --publisher fortinet --offer fortinet_fortiweb-vm_v5 --plan fortinet_fw-vm
         az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm_payg_2022
@@ -45,7 +44,7 @@ jobs:
         deploymentName: ${{ steps.get-repo-name.outputs.repo }}
         resourceGroupName: ${{ steps.get-repo-name.outputs.repo }}
         template: ./000-main.bicep
-        parameters: 'storagePrefix=mystore storageSKU=Standard_LRS'
+        parameters: "adminPassword=${{ secrets.adminPassword }} adminUsername=${{ secrets.adminUsername }} deploymentPrefix=${{ steps.get-repo-name.outputs.repo }}"
         failOnStdErr: false
 
     - name: 'Run Azure CLI commands'
