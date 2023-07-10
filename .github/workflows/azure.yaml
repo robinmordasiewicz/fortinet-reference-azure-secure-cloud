@@ -19,4 +19,5 @@ jobs:
     - name: 'Run Azure CLI commands'
       run: |
           az account show
-          az group create --location CanadaCentral --name ${GITHUB_REPOSITORY}
+          REPO=`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`
+          az group create --location CanadaCentral --name ${REPO}
