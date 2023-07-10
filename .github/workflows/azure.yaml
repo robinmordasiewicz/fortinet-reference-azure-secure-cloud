@@ -72,11 +72,12 @@ jobs:
         az vm image terms accept --publisher fortinet --offer fortinet_fortigate-vm_v5 --plan fortinet_fg-vm_payg_2022
         az vm image terms accept --publisher fortinet --offer fortinet_fortiweb-vm_v5 --plan fortinet_fw-vm_payg_v2
 
+    - name: 'Show Output'
+      if: steps.dotenv.outputs.DEPLOYED == 'true'
+      run: az deployment group show -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }} --query properties.outputs
+
     - name: 'Destroy'
       if: steps.dotenv.outputs.DEPLOYED != 'true'
       run: |
         az deployment group list -g ${{ steps.get-repo-name.outputs.repo }} && az deployment group delete -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }}
         az group exists -n ${{ steps.get-repo-name.outputs.repo }} && az group delete --yes --name ${{ steps.get-repo-name.outputs.repo }}
-
-    - name: 'Show Output'
-      run: az deployment group show -g ${{ steps.get-repo-name.outputs.repo }} -n ${{ steps.get-repo-name.outputs.repo }} --query properties.outputs
