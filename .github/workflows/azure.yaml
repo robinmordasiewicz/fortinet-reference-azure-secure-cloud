@@ -1,5 +1,5 @@
 ---
-name: Run Azure Login with OpenID Connect
+name: Deploy
 
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
 jobs: 
   build-and-deploy:
     runs-on: ubuntu-latest
-    steps.:
+    steps:
     - name: 'Clone Repo'
       uses: actions/checkout@v3
 
