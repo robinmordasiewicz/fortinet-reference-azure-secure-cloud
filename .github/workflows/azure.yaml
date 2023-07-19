@@ -39,11 +39,12 @@ jobs:
       id: environment
       run: |
           REPO=`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`
-          RESOURCEGROUP="`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`-RG"
-          DEPLOYMENT="`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`-DEPLOYMENT"
+          RESOURCEGROUP="`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`-RG-${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          DEPLOYMENTNAME="`echo ${GITHUB_REPOSITORY} | cut -f 2 -d "/"`-DEPLOYMENT"
+          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
           echo "repo=$(echo $REPO)" >> $GITHUB_OUTPUT
-          echo "resource-group=$(echo $RESOURCEGROUP)" >> $GITHUB_OUTPUT
-          echo "deployment=$(echo $DEPLOYMENT)" >> $GITHUB_OUTPUT
+          echo "resourceGroupName=$(echo $RESOURCEGROUP)" >> $GITHUB_OUTPUT
+          echo "deploymentName=$(echo $DEPLOYMENTNAME)" >> $GITHUB_OUTPUT
 
     - name: 'Az CLI login'
       uses: azure/login@v1
@@ -55,17 +56,17 @@ jobs:
     - name: 'Create Resource Group'
       if: steps.dotenv.outputs.DEPLOYED == 'true'
       run: |
-        az group create --location ${{ steps.dotenv.outputs.LOCATION }} --name ${{ steps.environment.outputs.resource-group }}
+        az group create --location ${{ steps.dotenv.outputs.LOCATION }} --name ${{ steps.environment.outputs.resourceGroupName }}
 
     - name: deploy
       if: steps.dotenv.outputs.DEPLOYED == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        deploymentName: ${{ steps.environment.outputs.deployment }}
-        resourceGroupName: ${{ steps.environment.outputs.resource-group }}
+        deploymentName: ${{ steps.environment.outputs.deploymentName }}
+        resourceGroupName: ${{ steps.environment.outputs.resourceGroupName }}
         template: ./000-main.bicep
-        parameters: "adminPassword=${{ secrets.adminPassword }} adminUsername=${{ secrets.adminUsername }} deploymentPrefix=${{ steps.environment.outputs.repo }}"
+        parameters: "adminPassword=${{ secrets.adminPassword }} adminUsername=${{ secrets.adminUsername }} deploymentPrefix=\"${{ steps.environment.outputs.repo }}-prefix\""
         failOnStdErr: false
 
     - name: 'Accept License Agreement'
@@ -78,10 +79,10 @@ jobs:
 
     - name: 'Show Output'
       if: steps.dotenv.outputs.DEPLOYED == 'true'
-      run: az deployment group show -g ${{ steps.environment.outputs.resource-group }} -n ${{ steps.environment.outputs.deployment }} --query properties.outputs
+      run: az deployment group show -g ${{ steps.environment.outputs.resourceGroupName }} -n ${{ steps.environment.outputs.deploymentName }} --query properties.outputs
 
     - name: 'Destroy'
       if: steps.dotenv.outputs.DEPLOYED != 'true'
       run: |
-        `az group exists -n ${{ steps.environment.outputs.resource-group }}` && az deployment group delete -g ${{ steps.environment.outputs.resource-group }} -n ${{ steps.environment.outputs.deployment }} || true
-        `az group exists -n ${{ steps.environment.outputs.resource-group }}` && az group delete --yes --name ${{ steps.environment.outputs.resource-group }} || true
+        `az group exists -n ${{ steps.environment.outputs.resourceGroupName }}` && az deployment group delete -g ${{ steps.environment.outputs.resourceGroupName }} -n ${{ steps.environment.outputs.deploymentName }} || true
+        `az group exists -n ${{ steps.environment.outputs.resourceGroupName }}` && az group delete --yes --name ${{ steps.environment.outputs.resourceGroupName }} || true
