@@ -9,15 +9,12 @@ on:  # yamllint disable-line rule:truthy
       - "*.bicep"
       - "005-fortiwebCustomData.txt"
       - ".github/workflows/azure.yaml"
-    branches:
-      - main
   push:
-    branches:
+    paths:
       - ".env"
       - "*.bicep"
       - "005-fortiwebCustomData.txt"
       - ".github/workflows/azure.yaml"
-      - main
 
 permissions:
       id-token: write
