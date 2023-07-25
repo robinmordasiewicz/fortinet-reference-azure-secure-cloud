@@ -4,6 +4,8 @@ https://www.youtube.com/watch?v=IKuw9T6vZYU
 
 https://github.com/jongio/github-azure-oidc
 
+https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+
 https://github.com/marketplace/actions/azure-cli-action
 
 https://github.com/Azure/login
@@ -34,3 +36,4 @@ az deployment group show -g fortinet-secure-cloud-blueprint -n fortinet-secure-c
 ```
 az deployment group delete  -g fortinet-secure-cloud-blueprint -n fortinet-secure-cloud-blueprint
 ```
+
