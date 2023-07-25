@@ -6,6 +6,8 @@ https://github.com/jongio/github-azure-oidc
 
 https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
 
+https://www.youtube.com/watch?v=10ljwwJ3V30
+
 https://github.com/marketplace/actions/azure-cli-action
 
 https://github.com/Azure/login
