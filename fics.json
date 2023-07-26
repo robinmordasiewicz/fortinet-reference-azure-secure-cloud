@@ -52,5 +52,5 @@
         "audiences": [
             "api://AzureADTokenExchange"
         ]
-    },
+    }
 ]
